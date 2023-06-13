@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Article;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
+use App\Models\Article;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class ArticleController extends Controller
 {
@@ -13,7 +16,22 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        //
+        $articles = Article::when(request()->has("keyword"), function ($query) {
+            $query->where(function (Builder $builder) {
+                $keyword = request()->keyword;
+                $builder->where("title", "like", "%" . $keyword . "%");
+                $builder->orWhere("description", "like", "%" . $keyword . "%");
+            });
+        })
+            ->when(Auth::user()->role === 'user', fn ($q) => $q->where('user_id', Auth::id()))
+            ->when(request()->has('title'), function ($query) {
+                $sortType = request()->title ?? 'asc';
+                $query->orderBy("title", $sortType);
+            })
+            ->latest("id")
+            ->paginate(7)->withQueryString();
+
+        return view("article.index", compact('articles'));
     }
 
     /**
@@ -21,7 +39,7 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        //
+        return view('article.create');
     }
 
     /**
@@ -29,7 +47,13 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request)
     {
-        //
+        $article = Article::create([
+            "title" => $request->title,
+            "description" => $request->description,
+            "category_id" => $request->category,
+            "user_id" => Auth::id()
+        ]);
+        return redirect()->route("article.index")->with("message", $article->title . " is created");
     }
 
     /**
@@ -37,7 +61,7 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        //
+        return view('article.show', compact('article'));
     }
 
     /**
@@ -45,7 +69,14 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        //
+        // if (!Gate::allows('article-update',$article)) {
+        //     return abort(403,'ပေးမသုံးပါ။');
+        // }
+        // if (Gate::denies('article-update',$article)) {
+        //     return abort(403,'ပေးမသုံးဘူးကွာ။');
+        // }
+        $this->authorize('update', $article);
+        return view('article.edit', compact('article'));
     }
 
     /**
@@ -53,7 +84,17 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, Article $article)
     {
-        //
+        $this->authorize('update', $article);
+        // if ($request->user()->cannot('update',$article)) {
+        //    return abort(403,'sorry');
+        // }
+        $article->update([
+            "title" => $request->title,
+            "description" => $request->description,
+            "category_id" => $request->category
+        ]);
+
+        return redirect()->route("article.index")->with("message", $article->title . " is updated");
     }
 
     /**
@@ -61,6 +102,8 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+        $this->authorize('delete', $article);
+        $article->delete();
+        return redirect()->route("article.index")->with("message", "Article is deleted");
     }
 }
