@@ -19,27 +19,41 @@
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" class=" min-vh-100 d-flex flex-column">
         @include('layouts.nav')
 
-
-        <main class="py-4">
-            <div class=" container">
-                <div class="row">
-                    <div class=" col-lg-8">
-                        @yield('content')
-                    </div>
-                    <div class=" col-lg-4">
-                        @include('layouts.right-sidebar')
+         @auth
+           <main class="py-4">
+                <div class=" container">
+                    <div class="row">
+                        <div class=" col-lg-8">
+                            @yield('content')
+                        </div>
+                        <div class=" col-lg-4">
+                            @include('layouts.right-sidebar')
+                        </div>
                     </div>
                 </div>
-            </div>
-        </main>
+        @endauth
 
+        @guest
+            <main class="py-4">
+                <div class=" container">
+                    <div class="row">
+                        <div class=" col-lg-8">
+                            @yield('content')
+                        </div>
+                        <div class=" col-lg-4 position-sticky" style="top:70px">
+                            @include('layouts.right-sidebar')
+                        </div>
+                    </div>
+                </div>
+            </main>
+        @endguest
+
+        <footer class=" bg-dark py-5 text-center text-white mt-auto">
+            <p class="mb-0">Page Footer</p>
+        </footer>
     </div>
-    <footer class=" bg-dark py-5 text-center text-white">
-        <p class="mb-0">Page Footer</p>
-    </footer>
 </body>
-
 </html>

@@ -8,8 +8,14 @@ use Illuminate\Auth\Access\Response;
 
 class CategoryPolicy
 {
+
     // public function before(User $user){
     //     if($user->role === "admin"){
+
+    // public function before(User $user)
+    // {
+    //     if ($user->role === "admin") {
+
     //         return true;
     //     }
     // }
@@ -19,7 +25,6 @@ class CategoryPolicy
     public function viewAny(User $user): bool
     {
         return $user->role === "admin";
-
     }
 
     /**
@@ -28,7 +33,6 @@ class CategoryPolicy
     public function view(User $user, Category $category): bool
     {
         return $user->role === "admin";
-
     }
 
     /**
@@ -37,7 +41,6 @@ class CategoryPolicy
     public function create(User $user): bool
     {
         return $user->role === "admin";
-
     }
 
     /**
@@ -46,7 +49,6 @@ class CategoryPolicy
     public function update(User $user, Category $category): bool
     {
         return $user->id === $category->user_id;
-
     }
 
     /**
@@ -55,8 +57,6 @@ class CategoryPolicy
     public function delete(User $user, Category $category): bool
     {
         return $user->id === $category->user_id;
-
-
     }
 
     /**

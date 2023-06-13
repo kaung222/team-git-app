@@ -1,3 +1,4 @@
+
 @extends('layouts.master')
 
 @section('content')
@@ -39,3 +40,4 @@
         {{ $articles->onEachSide(1)->links() }}
     </div>
 @endsection
+

@@ -8,7 +8,6 @@ use Illuminate\Auth\Access\Response;
 
 class ArticlePolicy
 {
-
     public function before(User $user)
     {
         if ($user->role === "admin") {
@@ -20,7 +19,6 @@ class ArticlePolicy
      */
     public function viewAny(User $user): bool
     {
-        //
     }
 
     /**

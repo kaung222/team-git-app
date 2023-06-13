@@ -32,5 +32,5 @@ class HomeController extends Controller
         // Gate::authorize("show-user-list");
         $users = User::paginate(7)->withQueryString();
         return view('users',compact('users'));
-    }
+      }
 }
