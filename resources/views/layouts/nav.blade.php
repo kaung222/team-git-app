@@ -1,4 +1,6 @@
+
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm sticky-top">
+
     <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
             {{ config('app.name', 'Laravel') }}
@@ -19,6 +21,8 @@
                 <!-- Authentication Links -->
                 @auth
 
+
+                 
                     @can('viewAny',App\Models\Category::class)
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('category.create') }}">Create Category</a>
@@ -40,8 +44,9 @@
                     </li>
 
 
-                    @can("admin-only")
-                     <li class="nav-item">
+
+                    @can('admin-only')
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ route('users') }}">User List</a>
                         </li>
                     @endcan
