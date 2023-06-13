@@ -2,16 +2,18 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Article;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class UpdateArticleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize(Article $article): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +24,9 @@ class UpdateArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "title" => "required|min:10|max:255",
+            "description" => "required|min:100",
+            "category" => "required|exists:categories,id"
         ];
     }
 }
